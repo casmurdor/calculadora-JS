@@ -36,15 +36,13 @@
         link.href = "./css/style.css";
         document.head.appendChild(link);
     };
-    // TODO: Quitar separador de millares
+
     const calculadora = {
-        // Se pueden cambiar.
-        separador_millares: ".",
-        separador_decimal: ",",
-        // El valor inicial de la pantalla es "0".
         pantalla: "0",
-        // Valor real de la pantalla. Se usa para las operaciones.
         valor_real: 0,
+        segundo_operando: 0,
+        operando: false,
+        ultimo_boton: "",
 
         /**
          * Comprueba el botón que se ha pulsado y ejecuta la acción correspondiente.
@@ -54,11 +52,22 @@
         comprobar_boton: function (boton) {
             switch (boton) {
                 case "+":
+                    this.sumar();
+                    break;
                 case "-":
+                    this.restar();
+                    break;
                 case "X":
+                    this.multiplicar();
+                    break;
                 case "÷":
+                    this.dividir();
+                    break;
                 case "%":
+                    this.modulo();
+                    break;
                 case "=":
+                    this.resultado();
                     break;
                 case ",":
                     this.agregar_separador_decimal();
@@ -78,16 +87,84 @@
             };
         },
 
+        sumar: function () {
+            if (!this.operando) {
+                this.operando = true;
+                this.pantalla = "0";
+                this.ultimo_boton = "+";
+            }
+        },
+
+        restar: function () {
+            if (!this.operando) {
+                this.operando = true;
+                this.pantalla = "0";
+                this.ultimo_boton = "-";
+            }
+        },
+
+        multiplicar: function () {
+            if (!this.operando) {
+                this.operando = true;
+                this.pantalla = "0";
+                this.ultimo_boton = "X";
+            }
+        },
+
+        dividir: function () {
+            if (!this.operando) {
+                this.operando = true;
+                this.pantalla = "0";
+                this.ultimo_boton = "÷";
+            }
+        },
+
+        modulo: function () {
+            if (!this.operando) {
+                this.operando = true;
+                this.pantalla = "0";
+                this.ultimo_boton = "%";
+            }
+        },
+
+        resultado: function () {
+            if (this.operando) {
+                this.operando = false;
+                switch (this.ultimo_boton) {
+                    case "+":
+                        this.valor_real = this.valor_real + this.segundo_operando;
+                        this.pantalla = this.valor_real.toString().replace(".", ",").substring(0, 9); // substring para que no se salga de la pantalla
+                        break;
+                    case "-":
+                        this.valor_real = this.valor_real - this.segundo_operando;
+                        this.pantalla = this.valor_real.toString().replace(".", ",").substring(0, 9);
+                        break;
+                    case "X":
+                        this.valor_real = this.valor_real * this.segundo_operando;
+                        this.pantalla = this.valor_real.toString().replace(".", ",").substring(0, 9);
+                        break;
+                    case "÷":
+                        this.valor_real = this.valor_real / this.segundo_operando;
+                        this.pantalla = this.valor_real.toString().replace(".", ",").substring(0, 9);
+                        break;
+                    case "%":
+                        this.valor_real = this.valor_real % this.segundo_operando;
+                        this.pantalla = this.valor_real.toString().replace(".", ",").substring(0, 9);
+                        break;
+                }
+            }
+        },
+
         /**
          * Añade el punto decimal a la calculadora.
          */
         agregar_separador_decimal: function () {
             if (this.pantalla == "0")
-                this.pantalla = "0" + this.separador_decimal;
-            else if (!this.pantalla.includes(this.separador_decimal))
-                this.pantalla = this.pantalla + this.separador_decimal;
+                this.pantalla = "0" + ",";
+            else if (!this.pantalla.includes(","))
+                this.pantalla = this.pantalla + ",";
 
-            this.valor_real = parseFloat(this.pantalla.replace(this.separador_decimal, "."));
+            this.valor_real = parseFloat(this.pantalla.replace(",", "."));
         },
 
         /**
@@ -96,7 +173,7 @@
         cambiar_signo: function () {
             if (!this.pantalla == "0") {
                 this.valor_real = -this.valor_real;
-                this.pantalla = this.valor_real.toString().replace(".", this.separador_decimal);
+                this.pantalla = this.valor_real.toString().replace(".", ",");
             }
         },
 
@@ -108,8 +185,8 @@
                 this.pantalla = "0";
                 this.valor_real = 0;
             } else {
-                this.valor_real = parseFloat(this.pantalla.replace(this.separador_decimal, ".").substring(0, this.pantalla.length - 1));
-                this.pantalla = this.valor_real.toString().replace(".", this.separador_decimal);
+                this.valor_real = parseFloat(this.pantalla.replace(",", ".").substring(0, this.pantalla.length - 1));
+                this.pantalla = this.valor_real.toString().replace(".", ",");
             }
         },
 
@@ -119,30 +196,19 @@
          * @param {string} numero el número que se quiere añadir a la calculadora.
          */
         agregar_numero: function (numero) {
-            if (this.pantalla == "0") {
-                this.pantalla = numero;
-                this.valor_real = parseFloat(numero);
-            }
-            else {
-                this.agregar_separador_millar(numero);
-            };
-        },
-
-        /**
-         * Añade el separador de millares a la calculadora.
-         * 
-         * @param {string} numero el número que se quiere añadir a la calculadora
-         */
-        agregar_separador_millar: function (numero) {
-            const patron = new RegExp("\\" + this.separador_millares, "g");
-
-            if ((this.pantalla.replace(patron, "").length % 3 === 0) && !this.pantalla.includes(this.separador_decimal)) {
-                this.pantalla = this.pantalla + this.separador_millares + numero;
-                this.valor_real = parseFloat(this.pantalla.replace(this.separador_decimal, ".").replace(patron, ""));
+            if (!this.operando) {
+                if (this.pantalla == "0") {
+                    this.pantalla = numero;
+                    this.valor_real = parseFloat(numero);
+                }
+                else {
+                    this.pantalla = this.pantalla + numero;
+                    this.valor_real = parseFloat(this.pantalla.replace(",", "."));
+                };
             } else {
-                this.pantalla = this.pantalla + numero;
-                this.valor_real = parseFloat(this.pantalla.replace(this.separador_decimal, "."));
-            }
+                this.pantalla = numero;
+                this.segundo_operando = parseFloat(numero);
+            };
         },
 
         /**

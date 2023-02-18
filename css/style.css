@@ -1,0 +1,28 @@
+@import url('https://necolas.github.io/normalize.css/8.0.1/normalize.css');
+@import url('https://fonts.googleapis.com/css2?family=Chivo+Mono&display=swap');
+
+* {
+    font-family: 'Chivo Mono', monospace;
+    text-align: center;
+    font-size: 1.1em;
+    font-style: normal;
+}
+
+input {
+    margin-top: 5%;
+    margin-bottom: 1%;
+    text-align: right;
+    padding: 5px;
+    width: 35%;
+}
+
+button {
+    width: 8%;
+    margin: 2px;
+    padding: 4px;
+}
+
+div{
+    background-color: #f2f2f2;
+    border: 1px solid #ccc;
+}
