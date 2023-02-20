@@ -103,11 +103,19 @@
             }
         },
 
+        multiplicar: function () {
+            if (!this.operando) {
+                this.operando = true;
+                this.pantalla = "0";
+                this.ultimo_boton = "X";
+            }
+        },
+
         dividir: function () {
             if (!this.operando) {
                 this.operando = true;
                 this.pantalla = "0";
-                this.ultimo_boton = "/";
+                this.ultimo_boton = "÷";
             }
         },
 
